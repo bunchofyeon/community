@@ -1,0 +1,170 @@
+<!-- 개인정보처리방침 페이지 -->
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>개인정보처리방침</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root { --text:#333; --head:#222; --line:#eee; }
+        body { max-width: 800px; margin: 40px auto; padding: 0 16px; font-family: "Noto Sans KR", system-ui, -apple-system, Segoe UI, Roboto, sans-serif; line-height: 1.7; color: var(--text); }
+        h1, h2, h3 { color: var(--head); }
+        h1 { border-bottom: 2px solid var(--line); padding-bottom: 10px; margin-bottom: 24px; }
+        section, .section { margin: 28px 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        th, td { border: 1px solid #ddd; padding: 10px 12px; text-align: left; vertical-align: top; }
+        thead th { background: #fafafa; }
+        ul { padding-left: 20px; }
+        ol { padding-left: 20px; }
+        .muted { color:#666; font-size: .95em; }
+        footer { margin-top: 40px; color:#666; }
+        a.url { color:#0a66c2; text-decoration: none; }
+        a.url:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+<h1>개인정보처리방침</h1>
+<p class="muted">본 개인정보처리방침은 2025년 10월 22일부터 시행됩니다.</p>
+
+<section>
+    <h2>제1조 (수집 항목 및 이용 목적)</h2>
+    <p>회사는 회원가입, 커뮤니티 운영 및 고객지원 등을 위해 아래와 같은 개인정보를 최소한으로 수집·이용합니다.</p>
+    <table>
+        <thead>
+        <tr>
+            <th>구분</th>
+            <th>수집 항목</th>
+            <th>이용 목적</th>
+            <th>보유 기간</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>회원가입(필수)</td>
+            <td>이메일, 비밀번호, 닉네임</td>
+            <td>본인 식별·인증, 계정 관리</td>
+            <td>회원 탈퇴 시 지체 없이 파기(법령 예외 포함)</td>
+        </tr>
+        <tr>
+            <td>프로필(선택)</td>
+            <td>프로필 이미지</td>
+            <td>커뮤니티 내 표시(마이페이지 노출 등)</td>
+            <td>변경/삭제 또는 탈퇴 시까지</td>
+        </tr>
+        <tr>
+            <td>서비스 이용</td>
+            <td>접속 로그, IP, 쿠키, 기기정보</td>
+            <td>보안, 부정 이용 방지, 이용 통계 및 품질 개선</td>
+            <td>수집일로부터 최대 1년 또는 관련 법령상 기간</td>
+        </tr>
+        <tr>
+            <td>고객지원</td>
+            <td>이메일, 문의 내용, 첨부파일</td>
+            <td>민원 처리 및 분쟁 대응</td>
+            <td>처리 완료 후 3년(전자상거래법 등 해당 시)</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>제2조 (보유 및 파기)</h2>
+    <ol>
+        <li>원칙적으로 이용 목적 달성 또는 회원 탈퇴 시 지체 없이 파기합니다.</li>
+        <li>법령에서 정한 경우(예: 소비자 분쟁처리 기록 등)는 해당 기간 동안만 보관합니다.</li>
+        <li>내부 서비스 이력 보존 또는 분쟁 대응을 위해 계정·게시물 등을 일시적으로 비표시/비활성화할 수 있습니다.
+            이 경우 해당 데이터는 <u>일반 이용자에게 표시되지 않으며</u>,
+            법적 보존기간 경과 또는 보존 필요성이 해소되는 즉시 복구 불가능한 방법으로 영구 파기합니다.</li>
+    </ol>
+</section>
+
+<section>
+    <h2>제3조 (제3자 제공 및 처리위탁)</h2>
+    <ol>
+        <li>회사는 이용자 동의 없이는 개인정보를 외부에 제공하지 않으며, 법령에 따른 경우에만 예외적으로 제공할 수 있습니다.</li>
+        <li>원활한 서비스 제공을 위해 일부 업무를 외부 업체에 위탁할 수 있으며, 위탁 시 개인정보보호법에 따른 계약 체결 및 관리·감독을 수행합니다.</li>
+    </ol>
+    <table>
+        <thead>
+        <tr>
+            <th>수탁 업체</th>
+            <th>위탁 업무</th>
+            <th>보유 및 이용기간</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Amazon Web Services, Inc.</td>
+            <td>클라우드 인프라 제공 및 데이터 보관</td>
+            <td>위탁계약 종료 또는 회원 탈퇴 시까지(법령 예외 포함)</td>
+        </tr>
+        <tr>
+            <td>(주)알리고 등 메일/알림 발송 대행사</td>
+            <td>이메일·알림 발송 대행</td>
+            <td>발송 목적 달성 후 관련 법정 기간</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>제4조 (국외 이전)</h2>
+    <p>클라우드 리전 등 데이터가 국외에 저장·백업되는 경우에는 이전 국가, 이전 일시·방법, 이전 받는 자, 이전 항목, 보유 기간 및 보호조치를 서비스 공지 또는 본 방침을 통해 고지합니다.</p>
+    <ul>
+        <li>예시: 이전 국가 — 미국 / 이전 받는 자 — Amazon Web Services, Inc. / 방법 — 서비스 이용 시 네트워크 전송</li>
+        <li>문의: <a class="url" href="mailto:privacy@pineycommunity.com">privacy@pineycommunity.com</a></li>
+    </ul>
+</section>
+
+<section>
+    <h2>제5조 (보호 조치)</h2>
+    <ul>
+        <li>비밀번호 암호화 저장(예: BCrypt)</li>
+        <li>접근권한 최소화 및 접근통제(계정·권한 분리, DB 계정 최소권한, 네트워크 방화벽·보안그룹)</li>
+        <li>전송구간 암호화(HTTPS/TLS), 중요정보 저장 시 추가 암호화</li>
+        <li>접속기록 보관 및 위·변조 방지, 정기 점검</li>
+        <li>정기 보안 점검 및 취약점 개선(필요 시 모의침투 테스트)</li>
+    </ul>
+</section>
+
+<section>
+    <h2>제6조 (이용자 권리)</h2>
+    <ol>
+        <li>이용자는 마이페이지 또는 고객지원 채널을 통해 자신의 개인정보에 대한 열람·정정·삭제·처리정지·동의철회를 요청할 수 있습니다.</li>
+        <li>대리인 권리행사는 위임장 등 소정 서류 확인 후 처리합니다. 법령상 제한 사유가 있는 경우 그 이유를 안내합니다.</li>
+    </ol>
+</section>
+
+<section>
+    <h2>제7조 (쿠키 등)</h2>
+    <ol>
+        <li>맞춤형 서비스 제공 및 이용 통계 분석을 위해 쿠키·로컬스토리지 등 유사기술을 사용할 수 있습니다.</li>
+        <li>이용자는 브라우저 설정에서 쿠키 저장을 거부할 수 있으나 일부 기능이 제한될 수 있습니다.</li>
+    </ol>
+</section>
+
+<section>
+    <h2>제8조 (개인정보보호책임자)</h2>
+    <p>회사는 아래와 같이 개인정보보호책임자를 지정하고 있습니다.</p>
+    <ul>
+        <li>성명: 파이니 </li>
+        <li>직책: CPO / DPO</li>
+        <li>이메일: <a class="url" href="mailto:privacy@pineycommunity.com">privacy@pineycommunity.com</a></li>
+    </ul>
+    <p class="muted">개인정보 침해 신고·상담: 개인정보침해신고센터(118), 대검찰청 사이버수사과(1301), 경찰청(182)</p>
+</section>
+
+<section>
+    <h2>제9조 (고지 및 개정)</h2>
+    <ul>
+        <li>공고일자: 2025년 10월 22일</li>
+        <li>시행일자: 2025년 10월 22일</li>
+        <li>중대한 변경 시 최소 30일 전 사전 공지하며 필요한 경우 재동의를 진행합니다.</li>
+    </ul>
+</section>
+
+<footer>
+    <p>최종 업데이트: 2025년 10월 22일</p>
+</footer>
+</body>
+</html>
