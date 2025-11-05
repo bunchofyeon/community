@@ -55,6 +55,7 @@ public class Posts extends BaseTimeEntity {
     @OneToMany(mappedBy = "posts", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Files> files = new ArrayList<>();
 
+    // 게시글에 파일 하나 연결
     public void addFile(Files file) {
         files.add(file);
         file.setMappingPosts(this); // 양방향 연결 유지
@@ -78,14 +79,12 @@ public class Posts extends BaseTimeEntity {
     }
 
     // 수정사항 Dirty Checking
-    // dto.title 이런식으로 할지 고민
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
     }
 
     // 사용자 주입 (작성자를 알게 하기 위해)
-    // public void setUsers(Users users)
     public void setMappingUsers(Users users) {
         this.users = users;
     }

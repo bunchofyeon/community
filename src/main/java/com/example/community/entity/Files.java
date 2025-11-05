@@ -31,6 +31,10 @@ public class Files extends BaseTimeEntity {
     @Column(nullable = false, unique = true, name = "storage_key")
     private String storageKey; // 로컬 경로나 S3 key
 
+    // 지금은 로컬, 나중에 S3에 올릴거를 대비해서..
+    @Column(nullable = false, name = "storage_type")
+    private String storageType;
+
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
@@ -39,8 +43,6 @@ public class Files extends BaseTimeEntity {
     @JoinColumn(name = "post_id", nullable = false)
     private Posts posts;
 
-
-    // public void setPosts(Posts posts)
     public void setMappingPosts(Posts posts) {
         this.posts = posts;
     }

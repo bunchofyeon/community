@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter @NoArgsConstructor
 
 @Table(name = "profile_images")
-@SQLDelete(sql = "UPDATE profile_Images SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "UPDATE profile_images SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class ProfileImages extends BaseTimeEntity {
 
@@ -31,6 +31,9 @@ public class ProfileImages extends BaseTimeEntity {
 
     @Column(nullable = false, unique = true, name = "storage_key")
     private String storageKey;
+
+    @Column(nullable = false, name = "storage_type")
+    private String storageType;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
