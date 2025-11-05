@@ -185,6 +185,9 @@ public class UsersService {
             String encodePwd = encoder.encode(userUpdateRequest.getPassword());
             updateUsers.changePassword(encodePwd);
         }
+        // 비밀번호 검증 시점과 JPA 영속성 캐시(1차 캐시) 문제
+        // 프로필 수정 시 비밀번호 첫 시도는 실패, 두 번째엔 통과되는 문제때문에 넣었음!!
+        usersRepository.saveAndFlush(updateUsers);
 
         return UserResponse.fromEntity(updateUsers);
     }
