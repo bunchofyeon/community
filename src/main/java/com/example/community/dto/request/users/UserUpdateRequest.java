@@ -11,10 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserUpdateRequest {
 
-    @Email
-    @NotBlank(message = "이메일을 입력해주세요.")
-    private String email;
-
     @NotBlank(message = "현재 비밀번호를 입력해주세요.")
     private String currentPassword;
 
@@ -31,8 +27,7 @@ public class UserUpdateRequest {
     private String profileImageUrl;
 
     @Builder
-    public UserUpdateRequest(String email, String currentPassword, String password, String passwordCheck, String nickname, String profileImageUrl) {
-        this.email = email;
+    public UserUpdateRequest(String currentPassword, String password, String passwordCheck, String nickname, String profileImageUrl) {
         this.currentPassword = currentPassword;
         this.password = password;
         this.passwordCheck = passwordCheck;
