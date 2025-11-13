@@ -3,8 +3,11 @@ package com.example.community.service;
 import com.example.community.common.exception.custom.BadRequestException;
 import com.example.community.common.exception.custom.ConflictedException;
 import com.example.community.common.exception.custom.ResourceNotFoundException;
+import com.example.community.common.exception.custom.UnauthorizedException;
 import com.example.community.dto.request.auth.LoginRequest;
 import com.example.community.dto.request.auth.RegisterRequest;
+import com.example.community.dto.request.users.UserNicknameUpdateRequest;
+import com.example.community.dto.request.users.UserPasswordUpdateRequest;
 import com.example.community.dto.request.users.UserUpdateRequest;
 import com.example.community.dto.response.auth.LoginResponse;
 import com.example.community.dto.response.auth.RegisterResponse;
@@ -43,28 +46,16 @@ public class UsersService {
     private final JwtTokenUtil jwtTokenUtil;
 
     // 1. 회원가입
-    // 1-1. 이메일 중복 확인
-    public HttpStatus checkEmailDuplicate(String email) {
-        isExistUserEmail(email);
-        return HttpStatus.OK;
-    }
-
-    // 이메일 중복 체크
-    private void isExistUserEmail(String email) {
-        if (usersRepository.findByEmail(email).isPresent()) {
+    // 1-1. 이메일 중복 체크
+    public void isExistUserEmail(String email) {
+        if (usersRepository.existsByEmail(email)) {
             throw new ConflictedException("이미 사용 중인 이메일입니다.");
         }
     }
 
-    // 1-2. 닉네임 중복 확인
-    public HttpStatus checkNicknameDuplicate(String nickname) {
-        isExistUserNickname(nickname);
-        return HttpStatus.OK;
-    }
-
-    // 닉네임 중복 체크
-    private void isExistUserNickname(String nickname) {
-        if (usersRepository.findByNickname(nickname).isPresent()) {
+    // 1-2. 닉네임 중복 체크
+    public void isExistUserNickname(String nickname) {
+        if (usersRepository.existsByEmail(nickname)) {
             throw new ConflictedException("이미 사용 중인 닉네임입니다.");
         }
     }
@@ -102,15 +93,13 @@ public class UsersService {
     }
 
     // 2. 로그인 구현
-    // LoginRequest 가 아니라 LoginResponse (인증 성공 후 발급한 JWT 토큰을 주는거니까...)
-    // 2. 로그인 구현
     public LoginResponse login(LoginRequest loginRequest) {
-        // 1) 자격 증명 검증
+        // 1) 사용자 인증
         authenticate(loginRequest.getEmail(), loginRequest.getPassword());
 
         // 2) 응답은 Users 엔티티 기준 (이메일로 조회)
         Users user = usersRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("Users"));
+                .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 이메일입니다."));
 
         // 3) 토큰 생성 (email, role 문자열)
         String token = jwtTokenUtil.generateToken(
@@ -123,60 +112,99 @@ public class UsersService {
     }
 
     // 사용자 인증
-    // 헷갈리지 말자...
-    // 로그인 아직 안한 상태에서 인증 문제는 400 BadRequestException
-    // 로그인 된 상태에서 권한 문제는 403 forbidden, UnauthenticatedException
     private void authenticate(String email, String pwd) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, pwd));
-        } catch (DisabledException e) {
-            throw new BadRequestException("인증되지 않은 아이디입니다."); // 401
-        } catch (BadCredentialsException e) {
-            throw new BadRequestException("이메일 또는 비밀번호가 일치하지 않습니다."); // 401
+        } catch (DisabledException e) { // 계정 비활성화, 이메일 인증 미완료
+            throw new UnauthorizedException("인증되지 않은 아이디입니다.");
+        } catch (BadCredentialsException e) { // 로그인 실패 - 비밀번호 틀리거나 사용자 없음
+            throw new UnauthorizedException("이메일 또는 비밀번호가 일치하지 않습니다.");
         }
     }
 
-    // 비말번호 인코딩 체크 (사용자가 입력한 비밀번호와 디비에 저장된 비밀번호가 같은지 체크)
+    // 비밀번호 인코딩 체크
+    // 사용자가 입력한 비밀번호와 디비에 저장된 비밀번호가 같은지 체크
     private void checkEncodePassword(String rawPassword, String encodedPassword) {
         if (!encoder.matches(rawPassword, encodedPassword)) {
-            throw new BadRequestException("비밀번호가 일치하지 않습니다.");
+            throw new UnauthorizedException("비밀번호가 일치하지 않습니다.");
         }
     }
 
     // 3. 마이페이지
-    // 3-1. 사용자 정보 조회 (비밀번호 검증 후 정보 리턴)
-    // checkpwd 동작을 위해서 UserService 클래스 변경 -> (Users)로 캐스팅이 안된다고..
+    // 3-1. 사용자 정보 조회
     public UserResponse check(Users users, String password) {
-        checkEncodePassword(password, users.getPassword());
+        checkEncodePassword(password, users.getPassword()); // 비밀번호 검증 후 정보 리턴
         return UserResponse.fromEntity(users);
     }
 
+    // 3-2. 사용자 정보 수정 - 비밀번호 수정
+    public UserResponse updatePassword(Users user, UserPasswordUpdateRequest request) {
+
+        // 비밀번호 바꿀 사용자 찾기
+        Users updatePasswordUser = usersRepository.findByEmail(user.getEmail()). orElseThrow(
+                () -> new ResourceNotFoundException("사용자를 찾을 수 없습니다.") // 존쟈하지 않는 자원(사용자)
+        );
+
+        // 현재 비밀번호 확인
+        if(!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new UnauthorizedException("비밀번호가 일치하지 않습니다.");
+        }
+
+        // 비밀번호 변경
+        if(request.getNewPassword() != null || request.getNewPasswordCheck() != null) {
+            checkPassword(request.getNewPassword(), request.getNewPasswordCheck());
+            String encodedPassword = encoder.encode(request.getNewPassword());
+            updatePasswordUser.changePassword(encodedPassword);
+        }
+
+        // 리턴
+        return UserResponse.fromEntity(updatePasswordUser);
+    }
+
+    // 3-2. 사용자 정보 수정 - 닉네임 수정
+    public UserResponse updateNickname(Users user, UserNicknameUpdateRequest request) {
+
+        // 닉네임 바꿀 사용자 찾기
+        Users updateNicknameUser = usersRepository.findByEmail(user.getEmail()). orElseThrow(
+                () -> new ResourceNotFoundException("사용자를 찾을 수 없습니다.") // 존쟈하지 않는 자원(사용자)
+        );
+
+        // 현재 비밀번호 확인
+        if(!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new UnauthorizedException("비밀번호가 일치하지 않습니다.");
+        }
+
+        // 닉네임 변경
+        if (!user.getNickname().equals(request.getNickname())) {
+            updateNicknameUser.changeNickname(request.getNickname());
+        }
+
+        // 리턴
+        return UserResponse.fromEntity(updateNicknameUser);
+    }
+
+    /*
+    *
     // 3-2. 사용자 정보 수정
     public UserResponse update(Users users, UserUpdateRequest userUpdateRequest) {
 
         // 현재 비밀번호 확인
         if (!passwordEncoder.matches(userUpdateRequest.getCurrentPassword(), users.getPassword())) {
-            throw new BadRequestException("비밀번호가 일치하지 않습니다.");
+            throw new UnauthorizedException("비밀번호가 일치하지 않습니다.");
         }
 
         // 비밀번호 바꿀 사용자 찾기
         Users updateUsers = usersRepository.findByEmail(users.getEmail()).orElseThrow(
-                () -> new ResourceNotFoundException("사용자를 찾을 수 없습니다.")
+                () -> new ResourceNotFoundException("사용자를 찾을 수 없습니다.") // 존쟈하지 않는 자원(사용자)
         );
 
-        // 닉네임 바꾸기
+        // 닉네임 변경
         if (!users.getNickname().equals(userUpdateRequest.getNickname())) {
             updateUsers.changeNickname(userUpdateRequest.getNickname());
         }
 
         // 프로필 사진 바꾸기
         // ...
-
-        // 비밀번호 바꾸기
-        // encodePwd : 디비에는 암호화된 비밀번호를 저장하니까 수정할때도 인코딩해서 넣겠다는 뜻
-        // checkPassword(userUpdateRequest.getPassword(), userUpdateRequest.getPasswordCheck());
-        // String encodePwd = encoder.encode(userUpdateRequest.getPassword());
-        // updateUsers.changePassword(encodePwd);
 
         // 3) 새 비밀번호 둘 다 있을 때만 변경
         // 이건 좀 더 고민해봐야함
@@ -185,18 +213,14 @@ public class UsersService {
             String encodePwd = encoder.encode(userUpdateRequest.getPassword());
             updateUsers.changePassword(encodePwd);
         }
-        // 비밀번호 검증 시점과 JPA 영속성 캐시(1차 캐시) 문제
-        // 프로필 수정 시 비밀번호 첫 시도는 실패, 두 번째엔 통과되는 문제때문에 넣었음!!
-        usersRepository.saveAndFlush(updateUsers);
 
         return UserResponse.fromEntity(updateUsers);
     }
+     */
 
     // 4. 마이페이지 - 관리자, 회원 탈퇴
     // soft delete
-    public void delete(Long id) {
-        usersRepository.deleteById(id);
-    }
+    public void delete(Long id) { usersRepository.deleteById(id); }
 
     // 5. 관리자 - 회원 전체 조회
     public Page<UserResponse> getAllUsers(Pageable pageable) {
@@ -206,6 +230,5 @@ public class UsersService {
                 .collect(Collectors.toList());
         return new PageImpl<>(list, pageable, users.getTotalElements());
     }
-
 
 }

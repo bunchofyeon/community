@@ -3,10 +3,17 @@ package com.example.community.security.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
+
+import static com.example.community.common.AuthConstants.CLAIM_ROLE;
 
 /**
  * 토큰 발급/검증
@@ -14,17 +21,30 @@ import java.util.Date;
 @Component
 public class JwtTokenUtil implements Serializable {
 
-    private static final String SECRET_KEY = "7YyM7J2064uI44WL7YyM7J207YyFISHtlaDsiJjsnojslrQhIey9lOuqveydtOuaseydtOu0ieu0ieydtOynsQ==";
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1시간
+    private final SecretKey key;
+    private final long expirationMillis;
+
+    public JwtTokenUtil(
+            @Value("${jwt.secret-key}") String secretKey,
+            @Value("${jwt.token-expiration-seconds}") long expirationSeconds
+    ) {
+
+        // Base64 시크릿(yml에 있는 문자열)을 바이트로 복원
+        byte[] raw = Base64.getDecoder().decode(secretKey.getBytes(StandardCharsets.UTF_8));
+
+        this.key = Keys.hmacShaKeyFor(raw);
+        this.expirationMillis = expirationSeconds * 1000L; // 밀리초로 바꾸기
+    }
 
     // 1. Access Token 생성
     public String generateToken(String email, String role) {
+        long now = System.currentTimeMillis();
         return Jwts.builder()
                 .setSubject(email) // 토큰 주인 (이메일)
-                .claim("role", role) // 추가 정보
-                .setIssuedAt(new Date()) // 발급 시각
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // 만료 시간 (언제 만료될지)
-                .signWith(SignatureAlgorithm.HS512, SECRET_KEY) // 서명
+                .claim(CLAIM_ROLE, role) // 추가 정보
+                .setIssuedAt(new Date(now)) // 발급 시각
+                .setExpiration(new Date(now + expirationMillis)) // 만료 시간 (언제 만료될지)
+                .signWith(key, SignatureAlgorithm.HS512) // 서명
                 .compact();
     }
 
@@ -46,11 +66,10 @@ public class JwtTokenUtil implements Serializable {
     // 4. 토큰 검증 및 내용 추출 (토큰 파싱)
     // 토큰을 열어서 안에 들어있는 이메일, role, 만료시간 같은 내용을 꺼내는 함수
     private Claims parseClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(SECRET_KEY) // 검증
-                .parseClaimsJws(token) // 토큰 복호화
-                .getBody(); // Payload(Claims) 부분만 꺼냄
-
+        return Jwts.parserBuilder()
+                .setSigningKey(key) // 서명 검증용 키 등록
+                .build() // parser 객체 생성
+                .parseClaimsJws(token) // 토큰이 진짜인지 파싱 + 검증
+                .getBody(); // Payload(Claims, 유저 정보)등 추출
     }
-
 }

@@ -3,6 +3,8 @@ package com.example.community.controller;
 import com.example.community.common.response.ApiResponse;
 import com.example.community.dto.request.auth.LoginRequest;
 import com.example.community.dto.request.auth.RegisterRequest;
+import com.example.community.dto.request.users.UserNicknameUpdateRequest;
+import com.example.community.dto.request.users.UserPasswordUpdateRequest;
 import com.example.community.dto.request.users.UserUpdateRequest;
 import com.example.community.dto.response.auth.LoginResponse;
 import com.example.community.dto.response.auth.RegisterResponse;
@@ -39,14 +41,14 @@ public class UsersController {
     // 회원가입시 이메일 중복 확인
     @GetMapping("/checkEmail")
     public ResponseEntity<?> checkIdDuplicate(@RequestParam String email) {
-        usersService.checkEmailDuplicate(email);
+        usersService.isExistUserEmail(email);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     // 회원가입시 닉네임 중복 확인
     @GetMapping("/checkNickname")
     public ResponseEntity<?> checkNicknameDuplicate(@RequestParam String nickname) {
-        usersService.checkNicknameDuplicate(nickname);
+        usersService.isExistUserNickname(nickname);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -69,9 +71,6 @@ public class UsersController {
     }
 
     // 로그인 하고나서 비밀번호 일치확인
-    // 내가 이걸 왜 구현한거지?????.....
-    // @AuthenticationPrincipal CustomUserDetails customUserDetails로 변경
-    // -> Users users = customUserDetails.getUsers(); 추가해서 users 조회하도록
     @PostMapping("/checkPwd")
     public ResponseEntity<ApiResponse<UserResponse>> check(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -83,7 +82,31 @@ public class UsersController {
                 .body(ApiResponse.success("비밀번호 일치", successBody));
     }
 
-    // 사용자 정보 수정
+    // 사용자 정보 수정 - 비밀번호
+    @PatchMapping("/updatePassword")
+    public ResponseEntity<ApiResponse<UserResponse>> updatePassword(
+            @Valid @RequestBody UserPasswordUpdateRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Users users = customUserDetails.getUsers();
+        UserResponse successBody = usersService.updatePassword(users, request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.success("비밀번호 수정 성공", successBody));
+    }
+
+    // 사용자 정보 수정 - 닉네임
+    @PatchMapping("/updateNickname")
+    public ResponseEntity<ApiResponse<UserResponse>> updateNickname(
+            @Valid @RequestBody UserNicknameUpdateRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Users users = customUserDetails.getUsers();
+        UserResponse successBody = usersService.updateNickname(users, request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.success("닉네임 수정 성공", successBody));
+    }
+
+    /*
+    *
+    // 사용자 정보 수정 - 비밀번호
     @PatchMapping ("/update")
     public ResponseEntity<ApiResponse<UserResponse>> update(
             @Valid @RequestBody UserUpdateRequest userUpdateRequest,
@@ -93,6 +116,8 @@ public class UsersController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.success("정보 수정 성공", successBody));
     }
+
+     */
 
     // 마이페이지 - 사용자별 게시글 조회
     @GetMapping("/myPosts")

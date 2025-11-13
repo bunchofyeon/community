@@ -1,5 +1,6 @@
 package com.example.community.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -11,18 +12,15 @@ import java.util.Arrays;
 @Configuration
 public class CorsConfig {
 
+    @Value("${cors.front}")
+    private String front;
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 프론트 포트 허용
-        configuration.setAllowedOrigins(Arrays.asList(
-                "http://127.0.0.1:3000",
-                "http://localhost:3000"
-        ));
-
-        // configuration.setAllowedOrigins(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
+        configuration.addAllowedOriginPattern(front);
+        configuration.addAllowedMethod("*");
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
         configuration.setAllowCredentials(true); // 인증 정보 포함 허용
 
@@ -30,5 +28,4 @@ public class CorsConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
 }

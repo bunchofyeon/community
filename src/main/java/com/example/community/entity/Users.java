@@ -58,22 +58,14 @@ public class Users extends BaseTimeEntity {
         this.role = role;
     }
 
-    // update
-    // dto로 할지 고민중
     public void update(String password, String nickname, String profileImageUrl) {
         this.password = password;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
     }
 
-    // setter 대신
     public void changeNickname(String nickname) {
         this.nickname = nickname;
     }
-    public void changePassword(String encodedPassword) {
-        this.password = encodedPassword;
-    }
-    public void changeProfileImageUrl(String url) {
-        this.profileImageUrl = url;
-    }
+    public void changePassword(String encodedPassword) { this.password = encodedPassword; }
 }

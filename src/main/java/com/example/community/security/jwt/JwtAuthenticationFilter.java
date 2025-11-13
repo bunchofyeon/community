@@ -14,6 +14,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import static com.example.community.common.AuthConstants.AUTHORIZATION_HEADER;
+import static com.example.community.common.AuthConstants.BEARER_PREFIX;
+
+
 /**
  * JWT 토큰 검증을 수행하는 필터
  * (요청이 들어올 때마다 실행됨)
@@ -32,10 +36,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String header = request.getHeader("Authorization");
+        String header = request.getHeader(AUTHORIZATION_HEADER);
 
         // 헤더가 없거나 Bearer 토큰이 아니면 다음 필터로
-        if (header == null || !header.startsWith("Bearer ")) {
+        if (header == null || !header.startsWith(BEARER_PREFIX)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -55,7 +59,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             userDetails, null, userDetails.getAuthorities()); // 누구인지, 자격증명(null), 권한
 
             // 요청 관련 부가정보(IP, 세션 등) 붙이기
-            // 왜??... 보안 감사/로그 등에 도움... 흠...
             authentication.setDetails(
                     new WebAuthenticationDetailsSource().buildDetails(request));
 

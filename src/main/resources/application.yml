@@ -21,17 +21,26 @@ spring:
   cloud:
     aws:
       credentials:
-        accessKey: ${AWS_ACCESS_KEY_ID}
-        secretKey: ${AWS_SECRET_ACCESS_KEY}
+        accessKey: ${ACCESS_KEY}
+        secretKey: ${SECRET_ACCESS_KEY}
+      S3:
+        bucket: piney-community-bucket
       region:
         static: ap-northeast-2  # 버킷의 리전
-      s3:
 
-app:
-  storage:
-    bucket: # 버킷 이름
-    cdn-base-url: ""   # CloudFront 쓰면 https://dxxxx.cloudfront.net
-    public: true       # public 버킷이면 true, private면 false
+#app:
+#  storage:
+#    bucket: piney-community-bucket
+#    cdn-base-url: ""   # CloudFront 쓰면 https://dxxxx.cloudfront.net
+#    public: true       # public 버킷이면 true, private면 false
+
+jwt:
+  # secret-key: ${JWT_SECRET:change-base64}
+  secret-key: "7YyM7J2064uI44WL7YyM7J207YyFISHtlaDsiJjsnojslrQhIey9lOuqveydtOuaseydtOu0ieu0ieydtOynsQ=="
+  token-expiration-seconds: 3600 # 1시간
+
+cors:
+  front: http://localhost:3000
 
 logging:
   level:
