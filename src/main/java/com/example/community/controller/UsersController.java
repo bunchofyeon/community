@@ -144,7 +144,9 @@ public class UsersController {
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserResponse>> me(
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        Users me = customUserDetails.getUsers();
+        Long userId = customUserDetails.getUsers().getId();
+        Users me = usersService.getById(userId);
+
         return ResponseEntity.ok(
                 ApiResponse.success("me", UserResponse.fromEntity(me))
         );

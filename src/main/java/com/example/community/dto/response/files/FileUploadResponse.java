@@ -11,26 +11,29 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class FileUploadResponse {
 
+    private Long id;
     private String originName;
     private String fileType;
-    private String url; // 실제 다운로드 경로
+    private String fileUrl;
     private LocalDateTime uploadedAt;
 
     @Builder
-    public FileUploadResponse(String originName, String fileType, String url, LocalDateTime uploadedAt) {
+    public FileUploadResponse(Long id, String originName, String fileType,
+                              String fileUrl, LocalDateTime uploadedAt) {
+        this.id = id;
         this.originName = originName;
         this.fileType = fileType;
-        this.url = url;
+        this.fileUrl = fileUrl;
         this.uploadedAt = uploadedAt;
     }
 
     public static FileUploadResponse fromEntity(Files files) {
         return FileUploadResponse.builder()
+                .id(files.getId())
                 .originName(files.getOriginName())
                 .fileType(files.getFileType())
-                .url("/api/files/" + files.getId() + "/download") // S3면 presignedUrl 반환
+                .fileUrl(files.getFileUrl())
                 .uploadedAt(files.getCreatedAt())
                 .build();
     }
-
 }

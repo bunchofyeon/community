@@ -9,5 +9,4 @@ public interface FilesRepository extends JpaRepository<Files, Long> {
 
     List<Files> findByPostsId(Long postsId);
 
-    boolean existsByStorageKey(String storageKey);
 }

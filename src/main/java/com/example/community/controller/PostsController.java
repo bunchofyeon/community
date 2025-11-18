@@ -35,11 +35,9 @@ public class PostsController {
 
     // 게시글 목록 조회
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<Page<PostListResponse>>> boardList(
+    public ResponseEntity<ApiResponse<Page<PostListResponse>>> postList(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PostListResponse> listDTO = postsService.getAllPosts(pageable);
-        // return ResponseEntity.status(HttpStatus.OK)
-        //        .body(ApiResponse.success("게시글 목록 조회", listDTO));
         return ResponseFactory.success(listDTO);
     }
 

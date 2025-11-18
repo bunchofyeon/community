@@ -55,7 +55,7 @@ public class UsersService {
 
     // 1-2. 닉네임 중복 체크
     public void isExistUserNickname(String nickname) {
-        if (usersRepository.existsByEmail(nickname)) {
+        if (usersRepository.existsByNickname(nickname)) {
             throw new ConflictedException("이미 사용 중인 닉네임입니다.");
         }
     }
@@ -183,40 +183,11 @@ public class UsersService {
         return UserResponse.fromEntity(updateNicknameUser);
     }
 
-    /*
-    *
-    // 3-2. 사용자 정보 수정
-    public UserResponse update(Users users, UserUpdateRequest userUpdateRequest) {
-
-        // 현재 비밀번호 확인
-        if (!passwordEncoder.matches(userUpdateRequest.getCurrentPassword(), users.getPassword())) {
-            throw new UnauthorizedException("비밀번호가 일치하지 않습니다.");
-        }
-
-        // 비밀번호 바꿀 사용자 찾기
-        Users updateUsers = usersRepository.findByEmail(users.getEmail()).orElseThrow(
-                () -> new ResourceNotFoundException("사용자를 찾을 수 없습니다.") // 존쟈하지 않는 자원(사용자)
-        );
-
-        // 닉네임 변경
-        if (!users.getNickname().equals(userUpdateRequest.getNickname())) {
-            updateUsers.changeNickname(userUpdateRequest.getNickname());
-        }
-
-        // 프로필 사진 바꾸기
-        // ...
-
-        // 3) 새 비밀번호 둘 다 있을 때만 변경
-        // 이건 좀 더 고민해봐야함
-        if (userUpdateRequest.getPassword() != null || userUpdateRequest.getPasswordCheck() != null) {
-            checkPassword(userUpdateRequest.getPassword(), userUpdateRequest.getPasswordCheck());
-            String encodePwd = encoder.encode(userUpdateRequest.getPassword());
-            updateUsers.changePassword(encodePwd);
-        }
-
-        return UserResponse.fromEntity(updateUsers);
+    public Users getById(Long id) {
+        return usersRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
     }
-     */
+
 
     // 4. 마이페이지 - 관리자, 회원 탈퇴
     // soft delete

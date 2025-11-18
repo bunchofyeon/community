@@ -31,6 +31,9 @@ public class Users extends BaseTimeEntity {
     @Column(nullable = false, length = 10, unique = true)
     private String nickname;
 
+    @Column(name = "profile_image_key")
+    private String profileImageKey;
+
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
@@ -62,6 +65,16 @@ public class Users extends BaseTimeEntity {
         this.password = password;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public void updateProfileImage(String profileImageKey, String profileImageUrl) {
+        this.profileImageKey = profileImageKey;
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public void removeProfileImage(String profileImageKey, String profileImageUrl) {
+        this.profileImageKey = null;
+        this.profileImageUrl = null;
     }
 
     public void changeNickname(String nickname) {

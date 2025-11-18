@@ -2,10 +2,12 @@ package com.example.community.entity;
 
 import com.example.community.common.BaseTimeEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDateTime;
 
@@ -28,20 +30,30 @@ public class Files extends BaseTimeEntity {
     @Column(nullable = false, name = "file_size")
     private Long fileSize;
 
-    @Column(nullable = false, unique = true, name = "storage_key")
-    private String storageKey; // 로컬 경로나 S3 key
+    @Column(nullable = false, name = "s3_key")
+    private String s3Key;
 
-    // 지금은 로컬, 나중에 S3에 올릴거를 대비해서..
-    @Column(nullable = false, name = "storage_type")
-    private String storageType;
+    @Column(nullable = false, name = "file_url")
+    private String fileUrl;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    // 게시글 있어야 파일도 있으니까 optional = false
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "post_id", nullable = false)
     private Posts posts;
+
+    @Builder
+    public Files(String originName, String fileType, Long fileSize,
+                 String s3Key, String fileUrl, LocalDateTime deletedAt, Posts posts) {
+        this.originName = originName;
+        this.fileType = fileType;
+        this.fileSize = fileSize;
+        this.s3Key = s3Key;
+        this.fileUrl = fileUrl;
+        this.deletedAt = deletedAt;
+        this.posts = posts;
+    }
 
     public void setMappingPosts(Posts posts) {
         this.posts = posts;
