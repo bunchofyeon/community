@@ -7,7 +7,6 @@ import com.example.community.dto.response.files.FileDownloadResponse;
 import com.example.community.dto.response.files.FileUploadResponse;
 import com.example.community.dto.response.files.LambdaDownloadResponse;
 import com.example.community.dto.response.files.LambdaUploadResponse;
-import com.example.community.dto.response.posts.PostListResponse;
 import com.example.community.entity.Files;
 import com.example.community.entity.Posts;
 import com.example.community.entity.Users;
@@ -16,9 +15,6 @@ import com.example.community.repository.PostsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +24,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
