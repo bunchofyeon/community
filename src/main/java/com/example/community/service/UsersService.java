@@ -71,12 +71,14 @@ public class UsersService {
 
         // 4) 패스워드 암호화
         String encodePassword = encoder.encode(registerRequest.getPassword());
-        registerRequest.setPassword(encodePassword);
 
         // 5) 저장
-        Users saveUser = usersRepository.save(
+        Users users = usersRepository.save(
                 RegisterRequest.ofEntity(registerRequest));
-        return RegisterResponse.fromEntity(saveUser);
+
+        users.changePassword(encodePassword);
+
+        return RegisterResponse.fromEntity(users);
 
     }
 
@@ -181,9 +183,10 @@ public class UsersService {
         return UserResponse.fromEntity(updateNicknameUser);
     }
 
-    public Users getById(Long id) {
-        return usersRepository.findById(id)
+    public UserResponse getUserInfo(Users user) {
+        Users users = usersRepository.findById(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
+        return UserResponse.fromEntity(users);
     }
 
 

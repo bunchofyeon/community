@@ -5,7 +5,6 @@ import com.example.community.dto.request.auth.LoginRequest;
 import com.example.community.dto.request.auth.RegisterRequest;
 import com.example.community.dto.request.users.UserNicknameUpdateRequest;
 import com.example.community.dto.request.users.UserPasswordUpdateRequest;
-import com.example.community.dto.request.users.UserUpdateRequest;
 import com.example.community.dto.response.auth.LoginResponse;
 import com.example.community.dto.response.auth.RegisterResponse;
 import com.example.community.dto.response.comments.CommentResponse;
@@ -56,18 +55,18 @@ public class UsersController {
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<RegisterResponse>> register(
             @Valid @RequestBody RegisterRequest registerRequest) {
-        RegisterResponse successBody = usersService.register(registerRequest);
+        RegisterResponse response = usersService.register(registerRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success("회원가입 성공", successBody));
+                .body(ApiResponse.success("회원가입 성공", response));
     }
 
     // 로그인
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(
             @Valid @RequestBody LoginRequest loginRequest) {
-        LoginResponse successBody = usersService.login(loginRequest);
+        LoginResponse response = usersService.login(loginRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success("로그인 성공", successBody));
+                .body(ApiResponse.success("로그인 성공", response));
     }
 
     // 로그인 하고나서 비밀번호 일치확인
@@ -77,9 +76,9 @@ public class UsersController {
             @RequestBody Map<String, String> request) {
         String password = request.get("password");
         Users users = customUserDetails.getUsers();
-        UserResponse successBody = usersService.check(users, password);
+        UserResponse response = usersService.check(users, password);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success("비밀번호 일치", successBody));
+                .body(ApiResponse.success("비밀번호 일치", response));
     }
 
     // 사용자 정보 수정 - 비밀번호
@@ -88,9 +87,9 @@ public class UsersController {
             @Valid @RequestBody UserPasswordUpdateRequest request,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Users users = customUserDetails.getUsers();
-        UserResponse successBody = usersService.updatePassword(users, request);
+        UserResponse response = usersService.updatePassword(users, request);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ApiResponse.success("비밀번호 수정 성공", successBody));
+                .body(ApiResponse.success("비밀번호 수정 성공", response));
     }
 
     // 사용자 정보 수정 - 닉네임
@@ -99,25 +98,10 @@ public class UsersController {
             @Valid @RequestBody UserNicknameUpdateRequest request,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Users users = customUserDetails.getUsers();
-        UserResponse successBody = usersService.updateNickname(users, request);
+        UserResponse response = usersService.updateNickname(users, request);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ApiResponse.success("닉네임 수정 성공", successBody));
+                .body(ApiResponse.success("닉네임 수정 성공", response));
     }
-
-    /*
-    *
-    // 사용자 정보 수정 - 비밀번호
-    @PatchMapping ("/update")
-    public ResponseEntity<ApiResponse<UserResponse>> update(
-            @Valid @RequestBody UserUpdateRequest userUpdateRequest,
-            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        Users users = customUserDetails.getUsers();
-        UserResponse successBody = usersService.update(users, userUpdateRequest);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(ApiResponse.success("정보 수정 성공", successBody));
-    }
-
-     */
 
     // 마이페이지 - 사용자별 게시글 조회
     @GetMapping("/myPosts")
@@ -127,7 +111,7 @@ public class UsersController {
         Users users = customUserDetails.getUsers();
         Page<PostListResponse> listDTO = postsService.getMyPosts(pageable, users);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ApiResponse.success("사용자 게시글 목록 조회", listDTO));
+                .body(ApiResponse.success("사용자 게시글 목록 조회 성공", listDTO));
     }
 
     // 마이페이지 - 사용자별 댓글 조회
@@ -138,17 +122,18 @@ public class UsersController {
         Users users = customUserDetails.getUsers();
         Page<CommentResponse> listDTO = commentsService.getMyComments(pageable, users);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ApiResponse.success("사용자 댓글 목록 조회", listDTO));
+                .body(ApiResponse.success("사용자 댓글 목록 조회 성공", listDTO));
     }
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserResponse>> me(
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        Long userId = customUserDetails.getUsers().getId();
-        Users me = usersService.getById(userId);
+
+        Users users = customUserDetails.getUsers();
+        UserResponse response = usersService.getUserInfo(users);
 
         return ResponseEntity.ok(
-                ApiResponse.success("me", UserResponse.fromEntity(me))
+                ApiResponse.success("사용자 정보 조회 성공", response)
         );
     }
 

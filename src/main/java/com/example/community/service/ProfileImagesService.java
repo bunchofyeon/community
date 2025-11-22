@@ -36,16 +36,16 @@ public class ProfileImagesService {
      */
     public ProfileImageResponse uploadProfileImage(MultipartFile file, Long userId) throws Exception {
 
-        validateImage(file);
-
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        validateImage(file);
+
 
         // 기존 이미지가 있다면 로깅만 (S3 삭제는 TODO)
         String oldKey = user.getProfileImageKey();
         if (oldKey != null) {
             log.info("[PROFILE-IMAGE] 기존 프로필 이미지 존재: userId={}, oldKey={}", userId, oldKey);
-            // TODO: 기존 프로필 이미지 S3 삭제가 필요하면 여기서 처리
         }
 
         // 2. S3 key 생성 (profiles/{userId}/uuid.ext)
@@ -95,7 +95,6 @@ public class ProfileImagesService {
         String oldKey = user.getProfileImageKey();
         if (oldKey != null) {
             log.info("[PROFILE-IMAGE] 프로필 삭제 요청: userId={}, oldKey={}", userId, oldKey);
-            // TODO: S3 프로필 이미지 삭제 필요하면 여기서 처리
         }
 
         user.removeProfileImage(null, null); // 내부에서 key/url을 null로 셋팅
