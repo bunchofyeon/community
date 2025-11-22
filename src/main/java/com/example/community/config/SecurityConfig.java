@@ -29,52 +29,20 @@ public class SecurityConfig {
             AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                .authorizeHttpRequests(authorize
-                        -> authorize
-                        .requestMatchers(
-                                "/users/register",
-                                "/users/login",
-                                "/users/checkEmail",
-                                "/users/checkNickname",
-                                "/posts/list",
-                                "/terms",
-                                "/privacy",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-
-                                ///  Nginx
-                                "/api/users/register",
-                                "/api/users/login",
-                                "/api/users/checkEmail",
-                                "/api/users/checkNickname",
-                                "/api/posts/list",
-                                "/api/terms",
-                                "/api/privacy",
-                                "/api/swagger-ui/**",
-                                "/api/v3/api-docs/**"
-                        ).permitAll()
-
-                        // 게시글 상세 조회만 공개
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/posts/*").permitAll()
-
-                        // 댓글 목록 조회만 공개
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/posts/*/comments/list").permitAll()
-
-                        // CORS preflight(OPTIONS) 요청 허용
-                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-
-                        // 나머지는 JWT 인증 필수
-                        .anyRequest().authenticated()
-                )
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(e -> e.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll()
+                )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 }
