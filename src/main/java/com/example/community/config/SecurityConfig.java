@@ -46,7 +46,18 @@ public class SecurityConfig {
                                 "/terms",
                                 "/privacy",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+
+                                ///  Nginx
+                                "/api/users/register",
+                                "/api/users/login",
+                                "/api/users/checkEmail",
+                                "/api/users/checkNickname",
+                                "/api/posts/list",
+                                "/api/terms",
+                                "/api/privacy",
+                                "/api/swagger-ui/**",
+                                "/api/v3/api-docs/**"
                         ).permitAll()
 
                         // 게시글 상세 조회만 공개
