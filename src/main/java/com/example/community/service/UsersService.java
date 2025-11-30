@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UsersService {
 
-    private final PasswordEncoder encoder;
     private final UsersRepository usersRepository;
 
     private final AuthenticationManager authenticationManager;
@@ -70,7 +69,7 @@ public class UsersService {
         checkPassword(registerRequest.getPassword(), registerRequest.getPasswordCheck());
 
         // 4) 패스워드 암호화
-        String encodePassword = encoder.encode(registerRequest.getPassword());
+        String encodePassword = passwordEncoder.encode(registerRequest.getPassword());
 
         // 5) 저장
         Users users = usersRepository.save(
@@ -125,7 +124,7 @@ public class UsersService {
     // 비밀번호 인코딩 체크
     // 사용자가 입력한 비밀번호와 디비에 저장된 비밀번호가 같은지 체크
     private void checkEncodePassword(String rawPassword, String encodedPassword) {
-        if (!encoder.matches(rawPassword, encodedPassword)) {
+        if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
             throw new UnauthorizedException("비밀번호가 일치하지 않습니다.");
         }
     }
@@ -153,7 +152,7 @@ public class UsersService {
         // 비밀번호 변경
         if(request.getNewPassword() != null || request.getNewPasswordCheck() != null) {
             checkPassword(request.getNewPassword(), request.getNewPasswordCheck());
-            String encodedPassword = encoder.encode(request.getNewPassword());
+            String encodedPassword = passwordEncoder.encode(request.getNewPassword());
             updatePasswordUser.changePassword(encodedPassword);
         }
 
