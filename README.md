@@ -13,7 +13,7 @@ Spring Boot 3.5 · Express.js · MySQL · Docker · GitHub Actions · AWS(EC2, S
 - 2025.10 ~ 2025.12
 - 전체 백엔드 + 인프라 단독 구현
 - 프론트엔드 SPA 구성도 직접 구현
-- 
+  
 # 📘 프로젝트 개요
 
 **Piney Community**는 개인적인 고민 공유 + 개발 소통 기능을 제공하는 커뮤니티 서비스입니다.  
@@ -32,6 +32,33 @@ Spring Boot 3.5 · Express.js · MySQL · Docker · GitHub Actions · AWS(EC2, S
 <img width="2093" height="1525" alt="piney_community" src="https://github.com/user-attachments/assets/b6905518-3950-4d5b-9bab-69bc54f20913" />
 
 ---
+
+# 🛠 기술 스택
+
+### Backend
+- Spring Boot 3.5 / Java 21  
+- Spring Security + JWT  
+- Spring Data JPA
+- MySQL 8.0  
+- AWS S3 / Lambda / API Gateway  
+- Docker / Docker Compose  
+- Portainer / Private Docker Registry  
+
+### Frontend
+- Express.js  
+- HTML5 / CSS3 / JS  
+- Docker / Docker Compose  
+
+### DevOps / Infra
+- AWS EC2  
+- AWS S3  
+- AWS Route53  
+- Nginx Reverse Proxy  
+- Certbot(HTTPS 자동 인증)  
+- GitHub Actions (CI/CD)  
+
+---
+
 
 ## 📁 파일 업로드 / 다운로드 구조
 
@@ -85,38 +112,15 @@ Spring Boot 3.5 · Express.js · MySQL · Docker · GitHub Actions · AWS(EC2, S
 > 최종적으로 S3에서 파일을 받는 주체는 **브라우저**입니다.
 > 
 
-# 🛠 기술 스택
 
-### Backend
-- Spring Boot 3.5 / Java 21  
-- Spring Security + JWT  
-- Spring Data JPA
-- MySQL 8.0  
-- AWS S3 / Lambda / API Gateway  
-- Docker / Docker Compose  
-- Portainer / Private Docker Registry  
+# 🌐 도메인 / HTTPS
 
-### Frontend
-- Express.js  
-- HTML5 / CSS3 / JS  
-- Docker / Docker Compose  
-
-### DevOps / Infra
-- AWS EC2  
-- AWS S3  
-- AWS Route53  
-- Nginx Reverse Proxy  
-- Certbot(HTTPS 자동 인증)  
-- GitHub Actions (CI/CD)  
+- 도메인: piney.cloud 
+- DNS: Route53
+- HTTPS: Nginx + Certbot 자동 인증  
 
 ---
 
-# 🐞 트러블슈팅
-
-- Nginx Reverse Proxy 헤더 누락으로 SPA 라우팅 오류 -> 해결
-- multipart 용량 제한 -> Nginx/Spring 충돌 해결
-
----
 
 # 📦 Docker / 배포 구조
 
@@ -150,11 +154,10 @@ Spring Boot 3.5 · Express.js · MySQL · Docker · GitHub Actions · AWS(EC2, S
 
 ---
 
-# 🌐 도메인 / HTTPS
+# 🐞 트러블슈팅
 
-- 도메인: piney.cloud 
-- DNS: Route53
-- HTTPS: Nginx + Certbot 자동 인증  
+- Nginx Reverse Proxy 헤더 누락으로 SPA 라우팅 오류 -> 해결
+- multipart 용량 제한 -> Nginx/Spring 충돌 해결
 
 ---
 
