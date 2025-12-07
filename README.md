@@ -50,8 +50,7 @@ Spring Boot 3.5 · Express.js · MySQL · Docker · GitHub Actions · AWS(EC2, S
    - 이 URL과 만료 시간, 헤더 정보 등을 응답으로 반환합니다.
 
 4. **Spring Boot**  
-   - Lambda로부터 받은 Presigned URL을 사용해  
-     `HttpURLConnection`(혹은 RestTemplate 등)으로 **서버에서 S3로 파일을 업로드** 합니다.  
+   - Lambda로부터 받은 Presigned URL을 사용해 **서버에서 S3로 파일을 업로드** 합니다.  
    - 업로드가 성공하면 S3 Object URL, key, 파일 이름/타입/용량 등의 **메타데이터를 MySQL에 저장**합니다.
 
 5. **클라이언트**  
